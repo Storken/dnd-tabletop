@@ -25,3 +25,4 @@
   - Post event to connected channel
   - Roll dice from channel
   - Post polls to channel
+  - Integrate chat with channel?
