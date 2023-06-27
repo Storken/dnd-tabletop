@@ -3,7 +3,8 @@
 ## Planned features
 
 - User
-  - auth0 
+  - auth0
+  - roles: dm (admin) | player
 - Rooms
   - Firebase
 - Dice rolls
