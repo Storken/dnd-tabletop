@@ -11,11 +11,11 @@
   - self-hosted minIO: store image
   - Tokens: Monster | PC | NPC
 - Scenario
-  - A grid map
+  - Has a grid map
   - Fog of war?
 - Campaign
-  - A campaign is a room
-  - Multiple scenarios
+  - A `campaign` is a room
+  - Has multiple scenarios
   - PC: Every `player` has a `PC` (Player Character)
 - Dice rolls
   - Firebase: store roll result
