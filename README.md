@@ -13,6 +13,6 @@
   - Firebase: store image reference
   - self-hosted minIO: store image
   - Tokens: Monster | Player | NPC
-- Scenarios
+- Scenario
   - A grid map
   - Fog of war?
