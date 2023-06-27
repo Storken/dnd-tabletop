@@ -20,7 +20,7 @@
 - Dice rolls
   - Firebase: store roll result
   - PC: The PC that rolled the dice
-  - Dice type: d4 | d6 | d8 | d10 | d12 | d20 | d100
+  - Dice: d4 | d6 | d8 | d10 | d12 | d20 | d100
 - Discord bot
   - Post event to connected channel
   - Roll dice from channel
