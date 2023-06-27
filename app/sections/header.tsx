@@ -11,7 +11,7 @@ const Header = () => {
   ]
 
   return (
-    <nav className='bg-white border-gray-200 dark:bg-gray-900 relative z-10'>
+    <nav className='bg-white border-gray-200 dark:bg-gray-900 relative z-10 px-5'>
       <div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-4'>
         <a href='#' className='flex items-center relative'>
           <Image src='/logo.png' width={60} height={60} alt='logo' />

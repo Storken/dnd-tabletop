@@ -1,5 +1,4 @@
 'use client'
-
 import { ThemeProvider } from 'next-themes'
 
 type Props = {
