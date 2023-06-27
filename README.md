@@ -6,9 +6,9 @@
   - auth0
   - roles: dm (admin) | player
 - Rooms
-  - Firebase
+  - Firebase: store created rooms
 - Dice rolls
-  - Firebase
+  - Firebase: store roll result
 - Grid map
-  - Firebase
-  - self-hosted minIO
+  - Firebase: store image reference
+  - self-hosted minIO: store image
