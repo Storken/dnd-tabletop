@@ -24,11 +24,11 @@ export const CampaignListContextProvider = ({
   const [loading, setLoading] = useState(false)
   const [currentCampaign, setCurrentCampaign] = useState<Campaign>({
     id: 'abc',
-    name: 'abc'
+    name: 'Campaign1'
   })
   const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([
-    { id: 'abc', name: 'abc' },
-    { id: '123', name: '123' }
+    { id: 'abc', name: 'Campaign1' },
+    { id: '123', name: 'Campaign2' }
   ])
 
   return (

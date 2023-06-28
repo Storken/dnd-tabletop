@@ -14,7 +14,7 @@ export default function Page () {
     }
   }, [isLoaded, isSignedIn, router])
 
-  if (!isLoaded) return <></>
+  if (!isLoaded || isSignedIn) return <></>
 
   return (
     <main className='mx-auto'>

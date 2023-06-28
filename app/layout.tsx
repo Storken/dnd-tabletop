@@ -25,17 +25,13 @@ export default function RootLayout ({
       <body
         className={`${inter.className} bg-white dark:bg-black flex flex-col justify-between min-h-screen`}
       >
-        <Suspense fallback={<div>Loading authentication</div>}>
-          <ClerkProvider>
-            <Suspense fallback={<ClerkLoading />}>
-              <Providers>
-                <Header />
-                {children}
-                <Footer />
-              </Providers>
-            </Suspense>
-          </ClerkProvider>
-        </Suspense>
+        <ClerkProvider>
+          <Providers>
+            <Header />
+            {children}
+            <Footer />
+          </Providers>
+        </ClerkProvider>
       </body>
     </html>
   )

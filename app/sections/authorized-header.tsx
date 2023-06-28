@@ -1,21 +1,20 @@
 import useCampaignList from '@/contexts/campaign-list'
 import { SignOutButton } from '@clerk/nextjs'
 import {
-  IconArrowDown,
-  IconArrowUp,
   IconBat,
   IconCaretDown,
   IconCaretUp,
   IconDoorExit,
   IconMap,
+  IconMenu,
   IconSwords,
-  IconUser,
   IconUserShield
 } from '@tabler/icons-react'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Dropdown from 'react-dropdown'
 import DarkModeToggle from '../components/dark-mode-toggle'
+import Link from 'next/link'
 
 export const AuthorizedHeader = () => {
   const [openSidebar, setOpenSidebar] = useState(false)
@@ -51,26 +50,14 @@ export const AuthorizedHeader = () => {
                 onClick={() => setOpenSidebar(!openSidebar)}
               >
                 <span className='sr-only'>Open sidebar</span>
-                <svg
-                  className='w-6 h-6'
-                  aria-hidden='true'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    clipRule='evenodd'
-                    fillRule='evenodd'
-                    d='M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z'
-                  ></path>
-                </svg>
+                <IconMenu />
               </button>
-              <a href='/app/dashboard' className='flex ml-2 md:mr-24'>
+              <Link href='/app/campaigns' className='flex ml-2 md:mr-24'>
                 <Image height={50} width={50} alt='logo' src='/logo.png' />
                 <span className='self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white ml-2'>
                   MVTT
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -85,13 +72,13 @@ export const AuthorizedHeader = () => {
         <div className='h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800 mt-4 flex flex-col justify-between'>
           <ul className='space-y-2 font-medium'>
             <li key={'sidebar-campaigns'}>
-              <a
+              <Link
                 href='/app/campaigns'
                 className='flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 mb-8'
               >
                 <IconSwords />
                 <span className='ml-3'>Campaigns</span>
-              </a>
+              </Link>
             </li>
             {Boolean(allCampaigns) && (
               <>
@@ -116,13 +103,13 @@ export const AuthorizedHeader = () => {
                 </li>
                 {paths.map(({ url, title, Icon }) => (
                   <li key={'sidebar-' + title}>
-                    <a
+                    <Link
                       href={url}
                       className='flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                     >
                       <Icon />
                       <span className='ml-3'>{title}</span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </>

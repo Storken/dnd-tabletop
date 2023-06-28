@@ -1,9 +1,7 @@
 'use client'
 
-import { useAuth } from '@clerk/clerk-react'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { IconUser } from '@tabler/icons-react'
 import Link from 'next/link'
 
 const HomeHeader = () => {
@@ -16,12 +14,12 @@ const HomeHeader = () => {
   return (
     <nav className='bg-white border-gray-200 dark:bg-gray-900 relative z-10 px-5'>
       <div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-4'>
-        <a href='/' className='flex items-center relative'>
+        <Link href='/' className='flex items-center relative'>
           <Image src='/logo.png' width={60} height={60} alt='logo' />
           <span className='self-center text-2xl font-semibold whitespace-nowrap dark:text-white absolute -right-20 md:inline hidden'>
             MVTT
           </span>
-        </a>
+        </Link>
         <div className='flex md:order-2'>
           <Link href='/sign-in'>
             <button
@@ -61,7 +59,7 @@ const HomeHeader = () => {
           <ul className='flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700'>
             {navigationLinks.map(({ url, title }) => (
               <li key={`nav-${title}`}>
-                <a
+                <Link
                   href={url}
                   className={`block py-2 pl-3 pr-4 bg-blue-700 rounded md:bg-transparent md:p-0 ${
                     pathname === url
@@ -70,7 +68,7 @@ const HomeHeader = () => {
                   }`}
                 >
                   {title}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
