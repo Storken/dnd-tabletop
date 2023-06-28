@@ -15,6 +15,7 @@ import {
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import Dropdown from 'react-dropdown'
+import DarkModeToggle from '../components/dark-mode-toggle'
 
 export const AuthorizedHeader = () => {
   const [openSidebar, setOpenSidebar] = useState(false)
@@ -81,7 +82,7 @@ export const AuthorizedHeader = () => {
         }`}
         aria-label='Sidebar'
       >
-        <div className='h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800 mt-4'>
+        <div className='h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800 mt-4 flex flex-col justify-between'>
           <ul className='space-y-2 font-medium'>
             <li key={'sidebar-campaigns'}>
               <a
@@ -133,6 +134,9 @@ export const AuthorizedHeader = () => {
               </span>
             </li>
           </ul>
+          <div className='p-2 pb-4 w-full flex flex-row-reverse'>
+            <DarkModeToggle />
+          </div>
         </div>
       </aside>
     </>

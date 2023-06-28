@@ -7,7 +7,7 @@ export default function RootLayout ({
   children: React.ReactNode
 }) {
   return (
-    <div className='p-4 sm:ml-64 mt-24 h-full'>
+    <div className='p-4 sm:ml-64 md:ml-80 mt-28 h-full'>
       <SignedIn>{children}</SignedIn>
       <SignedOut>
         <RedirectToSignIn />
