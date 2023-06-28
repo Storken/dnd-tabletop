@@ -2,7 +2,10 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import { Providers } from './providers'
 import Footer from '@/app/sections/footer'
+import { ClerkLoading, ClerkProvider } from '@clerk/nextjs'
 import Header from './sections/header'
+import { Suspense } from 'react'
+import { IconTruckLoading } from '@tabler/icons-react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,11 +25,17 @@ export default function RootLayout ({
       <body
         className={`${inter.className} bg-white dark:bg-black flex flex-col justify-between min-h-screen`}
       >
-        <Providers>
-          <Header />
-          {children}
-          <Footer />
-        </Providers>
+        <Suspense fallback={<div>Loading authentication</div>}>
+          <ClerkProvider>
+            <Suspense fallback={<ClerkLoading />}>
+              <Providers>
+                <Header />
+                {children}
+                <Footer />
+              </Providers>
+            </Suspense>
+          </ClerkProvider>
+        </Suspense>
       </body>
     </html>
   )

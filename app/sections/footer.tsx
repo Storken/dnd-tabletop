@@ -1,6 +1,14 @@
+'use client'
+import { usePathname } from 'next/navigation'
 import DarkModeToggle from '../components/dark-mode-toggle'
 
 const Footer = () => {
+  const pathname = usePathname()
+
+  if (pathname.substring(0, 4) === '/app') {
+    return null
+  }
+
   return (
     <footer className='bg-white rounded-lg shadow m-4 dark:bg-gray-800 relative z-10'>
       <div className='w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between'>
