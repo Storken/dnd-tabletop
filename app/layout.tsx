@@ -4,8 +4,9 @@ import { Providers } from './providers'
 import Footer from '@/app/sections/footer'
 import { ClerkLoading, ClerkProvider } from '@clerk/nextjs'
 import Header from './sections/header'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { IconTruckLoading } from '@tabler/icons-react'
+import '../utils/firebase'
 
 const inter = Inter({ subsets: ['latin'] })
 

@@ -18,7 +18,9 @@ import Link from 'next/link'
 
 export const AuthorizedHeader = () => {
   const [openSidebar, setOpenSidebar] = useState(false)
-  const { currentCampaign, allCampaigns } = useCampaignList()
+  const { currentCampaign, setCurrentCampaign, allCampaigns } =
+    useCampaignList()
+
   const paths = [
     {
       url: `/app/scenarios/${currentCampaign?.id}`,
@@ -80,40 +82,38 @@ export const AuthorizedHeader = () => {
                 <span className='ml-3'>Campaigns</span>
               </Link>
             </li>
-            {Boolean(allCampaigns) && (
-              <>
-                <li className='relative'>
-                  <Dropdown
-                    options={allCampaigns.map(({ id, name }) => ({
-                      value: id,
-                      label: name,
-                      className: 'hover:bg-blue-400 cursor-pointer p-2'
-                    }))}
-                    controlClassName='bg-blue-500 text-white rounded-md mx-2 p-2 cursor-pointer hover:bg-blue-600 relative'
-                    menuClassName='absolute top-12 left-2 right-2 bg-blue-500'
-                    placeholder={'Select Campaign'}
-                    arrowClosed={
-                      <IconCaretDown className='absolute right-2 top-2' />
-                    }
-                    arrowOpen={
-                      <IconCaretUp className='absolute right-2 top-2' />
-                    }
-                    value={currentCampaign.id}
-                  />
-                </li>
-                {paths.map(({ url, title, Icon }) => (
-                  <li key={'sidebar-' + title}>
-                    <Link
-                      href={url}
-                      className='flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
-                    >
-                      <Icon />
-                      <span className='ml-3'>{title}</span>
-                    </Link>
-                  </li>
-                ))}
-              </>
-            )}
+            <li className='relative'>
+              <Dropdown
+                options={allCampaigns.map(({ id, title }) => ({
+                  value: id,
+                  label: title,
+                  className:
+                    'hover:bg-blue-400 cursor-pointer p-2 text-white rounded-lg'
+                }))}
+                controlClassName='bg-blue-500 text-white rounded-md mx-2 p-2 cursor-pointer hover:bg-blue-600 relative'
+                menuClassName='absolute top-12 left-2 right-2 bg-blue-500 rounded-lg'
+                placeholder={'Select Campaign'}
+                arrowClosed={
+                  <IconCaretDown className='absolute right-2 top-2' />
+                }
+                arrowOpen={<IconCaretUp className='absolute right-2 top-2' />}
+                value={currentCampaign?.id}
+                onChange={opt =>
+                  setCurrentCampaign(allCampaigns.find(c => c.id === opt.value))
+                }
+              />
+            </li>
+            {paths.map(({ url, title, Icon }) => (
+              <li key={'sidebar-' + title}>
+                <Link
+                  href={url}
+                  className='flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                >
+                  <Icon />
+                  <span className='ml-3'>{title}</span>
+                </Link>
+              </li>
+            ))}
             <li>
               <span className='inline-flex flex-nowrap p-2 mt-8'>
                 <IconDoorExit className='mr-3' />

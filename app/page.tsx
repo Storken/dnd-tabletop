@@ -40,7 +40,12 @@ export default function Home () {
               placeholder='Enter your email here...'
               required
             />
-            <PrimaryButton onClick={() => {}}>Sign up</PrimaryButton>
+            <PrimaryButton
+              className='absolute right-2.5 bottom-2.5'
+              onClick={() => {}}
+            >
+              Sign up
+            </PrimaryButton>
           </div>
         </form>
       </div>
