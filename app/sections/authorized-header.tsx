@@ -1,8 +1,9 @@
 import useCampaignList from '@/contexts/campaign-list'
-import { SignOutButton } from '@clerk/nextjs'
+import { SignOutButton, UserButton } from '@clerk/nextjs'
 import {
   IconBat,
   IconCaretDown,
+  IconCaretLeft,
   IconCaretUp,
   IconDoorExit,
   IconMap,
@@ -18,8 +19,7 @@ import Link from 'next/link'
 
 export const AuthorizedHeader = () => {
   const [openSidebar, setOpenSidebar] = useState(false)
-  const { currentCampaign, setCurrentCampaign, allCampaigns } =
-    useCampaignList()
+  const { currentCampaign } = useCampaignList()
 
   const paths = [
     {
@@ -36,6 +36,11 @@ export const AuthorizedHeader = () => {
       url: `/app/monsters/${currentCampaign?.id}`,
       title: 'Monsters',
       Icon: IconBat
+    },
+    {
+      url: `/app/game/${currentCampaign?.id}`,
+      title: 'Game',
+      Icon: IconSwords
     }
   ]
 
@@ -61,47 +66,33 @@ export const AuthorizedHeader = () => {
                 </span>
               </Link>
             </div>
+            <div className='flex flex-nowrap'>
+              <UserButton />
+              <span className='ml-2'></span>
+              <DarkModeToggle />
+            </div>
           </div>
         </div>
       </nav>
 
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700 ${
+        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 ${
           openSidebar ? 'translate-x-0' : ''
-        }`}
+        } ${Boolean(currentCampaign) ? 'sm:translate-x-0' : ''}`}
         aria-label='Sidebar'
       >
         <div className='h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800 mt-4 flex flex-col justify-between'>
-          <ul className='space-y-2 font-medium'>
-            <li key={'sidebar-campaigns'}>
+          <ul className={`space-y-2 font-medium`}>
+            <li key={'sidebar-campaigns'} className='mb-8'>
               <Link
                 href='/app/campaigns'
-                className='flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 mb-8'
+                className='flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
               >
-                <IconSwords />
-                <span className='ml-3'>Campaigns</span>
+                <IconCaretLeft />
+                <span className='ml-3 border-b border-dashed border-gray-300'>
+                  Campaigns
+                </span>
               </Link>
-            </li>
-            <li className='relative'>
-              <Dropdown
-                options={allCampaigns.map(({ id, title }) => ({
-                  value: id,
-                  label: title,
-                  className:
-                    'hover:bg-blue-400 cursor-pointer p-2 text-white rounded-lg'
-                }))}
-                controlClassName='bg-blue-500 text-white rounded-md mx-2 p-2 cursor-pointer hover:bg-blue-600 relative'
-                menuClassName='absolute top-12 left-2 right-2 bg-blue-500 rounded-lg'
-                placeholder={'Select Campaign'}
-                arrowClosed={
-                  <IconCaretDown className='absolute right-2 top-2' />
-                }
-                arrowOpen={<IconCaretUp className='absolute right-2 top-2' />}
-                value={currentCampaign?.id}
-                onChange={opt =>
-                  setCurrentCampaign(allCampaigns.find(c => c.id === opt.value))
-                }
-              />
             </li>
             {paths.map(({ url, title, Icon }) => (
               <li key={'sidebar-' + title}>
@@ -114,16 +105,7 @@ export const AuthorizedHeader = () => {
                 </Link>
               </li>
             ))}
-            <li>
-              <span className='inline-flex flex-nowrap p-2 mt-8'>
-                <IconDoorExit className='mr-3' />
-                <SignOutButton />
-              </span>
-            </li>
           </ul>
-          <div className='p-2 pb-4 w-full flex flex-row-reverse'>
-            <DarkModeToggle />
-          </div>
         </div>
       </aside>
     </>

@@ -1,7 +1,8 @@
 export default function Page ({ params }: { params: { campaign: string } }) {
   return (
     <main>
-      <h1>Scenarios list for campaign: {params.campaign}</h1>
+      <strong>The DM</strong> will be able to create maps with different
+      grid-sizes that can be used in the game.
     </main>
   )
 }

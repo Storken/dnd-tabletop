@@ -21,7 +21,7 @@ const DarkModeToggle = ({ small }: Props) => {
 
   return (
     <button
-      className='rounded-xl bg-transparent border-0 flex flex-nowrap items-center overflow-hidden'
+      className='rounded-xl bg-transparent border-0 flex flex-nowrap items-center overflow-hidden h-8'
       onClick={toggleMode}
     >
       <div className='w-8 h-8 relative rounded-3xl'>

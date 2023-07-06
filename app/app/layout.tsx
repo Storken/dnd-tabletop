@@ -1,4 +1,5 @@
 'use client'
+import useCampaignList from '@/contexts/campaign-list'
 import { RedirectToSignIn, SignedIn, SignedOut } from '@clerk/nextjs'
 
 export default function RootLayout ({
@@ -6,8 +7,13 @@ export default function RootLayout ({
 }: {
   children: React.ReactNode
 }) {
+  const { currentCampaign } = useCampaignList()
   return (
-    <div className='p-4 sm:pr-24 sm:ml-64 md:ml-80 mt-28 h-full'>
+    <div
+      className={`p-4 sm:p-24 mt-28 h-full ${
+        Boolean(currentCampaign) ? 'sm:ml-44 md:ml-60' : ''
+      }`}
+    >
       <SignedIn>{children}</SignedIn>
       <SignedOut>
         <RedirectToSignIn />

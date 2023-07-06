@@ -1,11 +1,29 @@
 import { firestoreDb } from '@/utils/firebase'
-import { addDoc, collection, deleteDoc, updateDoc } from 'firebase/firestore'
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
+import { useUser } from '@clerk/nextjs'
+import {
+  DocumentReference,
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  updateDoc
+} from 'firebase/firestore'
+import { useParams } from 'next/navigation'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import { useCollection } from 'react-firebase-hooks/firestore'
 
 export type Campaign = {
   id: string
   title: string
+  dm: DocumentReference
+  players: DocumentReference[]
 }
 
 type CampaignListContextProps = {
@@ -16,6 +34,7 @@ type CampaignListContextProps = {
   createCampaign: () => Promise<boolean>
   removeCampaign: (id: string) => Promise<boolean>
   editCampaign: (campaign: Campaign) => Promise<boolean>
+  userRefs: DocumentReference[]
 }
 
 type CampaignProviderProps = {
@@ -28,16 +47,21 @@ export const CampaignListContext: React.Context<CampaignListContextProps> =
 export const CampaignListContextProvider = ({
   children
 }: CampaignProviderProps) => {
+  const params = useParams()
+  const { user } = useUser()
   const [currentCampaign, setCurrentCampaign] = useState<Campaign>()
-
   const [value, loading, error] = useCollection(
     collection(firestoreDb, 'campaigns'),
     { snapshotListenOptions: { includeMetadataChanges: true } }
   )
+  const [userRefs, setUserRefs] = useState<DocumentReference[]>([])
 
   const createCampaign = async () => {
     try {
-      await addDoc(collection(firestoreDb, 'campaigns'), { title: '' })
+      await addDoc(collection(firestoreDb, 'campaigns'), {
+        title: '',
+        dm: doc(firestoreDb, `user/${user?.id}`)
+      })
     } catch (e) {
       return false
     }
@@ -48,7 +72,8 @@ export const CampaignListContextProvider = ({
     try {
       const docRef = value?.docs.find(doc => doc.id === campaign.id)?.ref
       if (docRef) {
-        await updateDoc(docRef, campaign)
+        const { id, ...updateData } = campaign
+        await updateDoc(docRef, updateData)
         return true
       }
     } catch (e) {
@@ -79,9 +104,20 @@ export const CampaignListContextProvider = ({
       ...doc.data()
     })) as Campaign[]
 
+    const users: DocumentReference[] = []
+    campaigns.forEach(({ dm, players }) => {
+      users.push(dm, ...(players ?? []))
+    })
+    setUserRefs(users)
+
     if (campaigns.length > 0) setCurrentCampaign(campaigns[0])
     return campaigns
   }, [loading, value])
+
+  useEffect(() => {
+    const campaign = allCampaigns.find(({ id }) => id === params?.campaign)
+    setCurrentCampaign(campaign)
+  }, [allCampaigns, params?.campaign, value])
 
   return (
     <CampaignListContext.Provider
@@ -92,7 +128,8 @@ export const CampaignListContextProvider = ({
         loading,
         createCampaign,
         removeCampaign,
-        editCampaign
+        editCampaign,
+        userRefs
       }}
     >
       {children}

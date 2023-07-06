@@ -1,7 +1,8 @@
 export default function Page ({ params }: { params: { campaign: string } }) {
   return (
     <main>
-      <h1>Monsters list for campaign: {params.campaign}</h1>
+      <strong>The DM</strong> will use this page for creating monsters that will
+      be placed on scenarios in the game
     </main>
   )
 }
