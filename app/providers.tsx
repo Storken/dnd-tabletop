@@ -5,6 +5,7 @@ import { useAuth } from '@clerk/nextjs'
 import { useEffect } from 'react'
 import { getAuth, signInWithCustomToken } from 'firebase/auth'
 import '@/utils/firebase'
+import { UserListContextProvider } from '@/contexts/user-list'
 
 type Props = {
   children: React.ReactNode
@@ -34,7 +35,9 @@ export function Providers ({ children }: Props) {
 
   return (
     <ThemeProvider attribute='class'>
-      <CampaignListContextProvider>{children}</CampaignListContextProvider>
+      <CampaignListContextProvider>
+        <UserListContextProvider>{children}</UserListContextProvider>
+      </CampaignListContextProvider>
     </ThemeProvider>
   )
 }

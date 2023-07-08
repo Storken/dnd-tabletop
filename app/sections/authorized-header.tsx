@@ -46,7 +46,7 @@ export const AuthorizedHeader = () => {
 
   return (
     <>
-      <nav className='fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700'>
+      <nav className='fixed top-0 z-40 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700'>
         <div className='px-3 py-3 lg:px-5 lg:pl-3'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center justify-start'>
@@ -76,7 +76,7 @@ export const AuthorizedHeader = () => {
       </nav>
 
       <aside
-        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 ${
+        className={`fixed top-0 left-0 z-30 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700 ${
           openSidebar ? 'translate-x-0' : ''
         } ${Boolean(currentCampaign) ? 'sm:translate-x-0' : ''}`}
         aria-label='Sidebar'

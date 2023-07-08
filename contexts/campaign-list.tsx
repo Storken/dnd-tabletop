@@ -24,6 +24,7 @@ export type Campaign = {
   title: string
   dm: DocumentReference
   players: DocumentReference[]
+  invited?: string[]
 }
 
 type CampaignListContextProps = {
