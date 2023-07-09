@@ -5,7 +5,7 @@ import useUserList from '@/contexts/user-list'
 import { IconCircleCheck, IconMail, IconX } from '@tabler/icons-react'
 import { useState } from 'react'
 
-const CharacterList = () => {
+const PlayerList = () => {
   const { currentPlayers } = useUserList()
   const { currentCampaign, editCampaign } = useCampaignList()
   const [open, setOpen] = useState(false)
@@ -40,7 +40,7 @@ const CharacterList = () => {
   }
 
   return (
-    <div className='mt-8'>
+    <div className='mt-8 max-w-2xl'>
       <div className='mb-8'>
         <ul className='list-none mt-4'>
           {currentPlayers?.map(player => (
@@ -106,14 +106,11 @@ const Row = ({
         )}
         {displayName || email}
       </span>
-      <button
-        className='bg-red-500 hover:bg-red-600 cursor-pointer border-0 text-white rounded-full'
-        onClick={remove}
-      >
+      <IconButton className='bg-red-500 hover:bg-red-600' onClick={remove}>
         <IconX fontSize='32px' />
-      </button>
+      </IconButton>
     </li>
   )
 }
 
-export default CharacterList
+export default PlayerList

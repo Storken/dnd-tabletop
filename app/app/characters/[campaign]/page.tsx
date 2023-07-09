@@ -1,11 +1,8 @@
-import CharacterList from './character-list'
-
 export default function Page ({ params }: { params: { campaign: string } }) {
   return (
     <main>
-      <h1>Player Characters</h1>
-      <CharacterList />
-      <h1>Non-Player Characters</h1>
+      <strong>The DM</strong> will use this page for creating characters that
+      will be placed on scenarios in the game
     </main>
   )
 }

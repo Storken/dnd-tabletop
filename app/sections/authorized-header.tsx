@@ -9,7 +9,8 @@ import {
   IconMap,
   IconMenu,
   IconSwords,
-  IconUserShield
+  IconUserShield,
+  IconUsers
 } from '@tabler/icons-react'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -23,9 +24,9 @@ export const AuthorizedHeader = () => {
 
   const paths = [
     {
-      url: `/app/scenarios/${currentCampaign?.id}`,
-      title: 'Scenarios',
-      Icon: IconMap
+      url: `/app/players/${currentCampaign?.id}`,
+      title: 'Players',
+      Icon: IconUsers
     },
     {
       url: `/app/characters/${currentCampaign?.id}`,
@@ -36,6 +37,11 @@ export const AuthorizedHeader = () => {
       url: `/app/monsters/${currentCampaign?.id}`,
       title: 'Monsters',
       Icon: IconBat
+    },
+    {
+      url: `/app/scenarios/${currentCampaign?.id}`,
+      title: 'Scenarios',
+      Icon: IconMap
     },
     {
       url: `/app/game/${currentCampaign?.id}`,
