@@ -18,6 +18,7 @@ const CharacterList = () => {
       inviteEmail
     ] as string[]
     editCampaign({ ...currentCampaign, invited })
+    setInviteEmail(undefined)
   }
 
   const removeInvitedPlayer = (email: string) => {
@@ -29,13 +30,22 @@ const CharacterList = () => {
     editCampaign({ ...currentCampaign, invited })
   }
 
+  const removePlayer = (id: string) => {
+    const players = currentCampaign?.players
+    if (!players) return
+    const index = players.findIndex(playerId => playerId === id)
+    if (index < 0) return
+    players.splice(index, 1)
+    editCampaign({ ...currentCampaign, players })
+  }
+
   return (
     <div className='mt-8'>
       <div className='mb-8'>
         <ul className='list-none mt-4'>
           {currentPlayers?.map(player => (
             <Row
-              remove={() => {}}
+              remove={() => removePlayer(player.uid)}
               active
               email={player.email}
               displayName={player.displayName}

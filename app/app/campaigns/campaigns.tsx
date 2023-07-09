@@ -4,41 +4,94 @@ import {
   IconCheck,
   IconPencil,
   IconPlayerPlay,
-  IconTrash
+  IconTrash,
+  IconX
 } from '@tabler/icons-react'
 import { Campaign } from '@/contexts/campaign-list'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useUser } from '@clerk/nextjs'
 
 const Campaigns = () => {
-  const { allCampaigns, createCampaign, removeCampaign } = useCampaignList()
+  const { dmCampaigns, playerCampaigns, invitedCampaigns, createCampaign } =
+    useCampaignList()
+
   return (
     <>
       <PrimaryButton
         className='mb-4'
         onClick={createCampaign}
-        disabled={allCampaigns.length >= 10}
+        disabled={dmCampaigns.length >= 10}
       >
         Add Campaign
       </PrimaryButton>
-      {allCampaigns.map(campaign => (
-        <EditableRow key={`row-${campaign.id}`} {...campaign} />
+      {dmCampaigns.map(campaign => (
+        <EditableRow key={`row-${campaign.id}`} {...campaign} isDm />
+      ))}
+      {playerCampaigns.map(campaign => (
+        <EditableRow key={`row-${campaign.id}`} {...campaign} isPlayer />
+      ))}
+      {invitedCampaigns.map(campaign => (
+        <EditableRow key={`row-${campaign.id}`} {...campaign} isInvited />
       ))}
     </>
   )
 }
 
-const EditableRow = ({ title, id, ...campaignProps }: Campaign) => {
+const EditableRow = ({
+  isDm,
+  isPlayer,
+  isInvited,
+  title,
+  id,
+  ...campaignProps
+}: Campaign & { isDm?: boolean; isPlayer?: boolean; isInvited?: boolean }) => {
   const { removeCampaign, editCampaign } = useCampaignList()
   const [edit, setEdit] = useState(false)
   const [val, setVal] = useState(title)
+  const { user } = useUser()
 
-  const onClick = async () => {
+  const onClickEdit = async () => {
     if (edit) {
       await editCampaign({ id, title: val, ...campaignProps })
       setEdit(false)
     } else {
       setEdit(true)
+    }
+  }
+
+  const onClickConfirmInvite = async () => {
+    const invitedPrev = campaignProps.invited
+    const userEmail = user?.emailAddresses[0].emailAddress
+    if (!userEmail || !invitedPrev) return
+    const players = [...campaignProps.players, user.id]
+    await editCampaign({
+      id,
+      title,
+      ...campaignProps,
+      players,
+      invited: invitedPrev.filter(email => email !== userEmail)
+    })
+  }
+
+  const removePlayerFromCampaign = async () => {
+    if (isInvited) {
+      const invitedPrev = campaignProps.invited
+      const userEmail = user?.emailAddresses[0].emailAddress
+      if (!userEmail || !invitedPrev) return
+      await editCampaign({
+        id,
+        title,
+        ...campaignProps,
+        invited: invitedPrev.filter(email => email !== userEmail)
+      })
+    } else if (user) {
+      await editCampaign({
+        id,
+        title,
+        ...campaignProps,
+        players: campaignProps.players.filter(playerId => playerId !== user.id)
+      })
     }
   }
 
@@ -59,29 +112,51 @@ const EditableRow = ({ title, id, ...campaignProps }: Campaign) => {
             {title || 'Unnamed campaign'}
           </div>
         )}
-        <IconButton className='py-0' onClick={onClick}>
-          {edit ? (
-            <IconCheck className='text-green-400' />
-          ) : (
-            <IconPencil className='text-blue-400' />
-          )}
-        </IconButton>
+        {isDm ? (
+          <IconButton className='py-0' onClick={onClickEdit}>
+            {edit ? (
+              <IconCheck className='text-green-400' />
+            ) : (
+              <IconPencil className='text-blue-400' />
+            )}
+          </IconButton>
+        ) : null}
       </div>
       <div className='flex flex-nowrap'>
-        <IconButton
-          className='bg-red-500 hover:bg-red-700 mr-4'
-          onClick={() => removeCampaign(id)}
-        >
-          <IconTrash />
-        </IconButton>
-        <Link href={`/app/scenarios/${id}`}>
+        {isDm ? (
           <IconButton
-            className='bg-green-500 hover:bg-green-700'
-            onClick={() => {}}
+            className='bg-red-500 hover:bg-red-700 mr-4'
+            onClick={() => removeCampaign(id)}
           >
-            <IconPlayerPlay />
+            <IconTrash />
           </IconButton>
-        </Link>
+        ) : null}
+        {isPlayer || isInvited ? (
+          <IconButton
+            className='bg-red-500 hover:bg-red-700 mr-4'
+            onClick={() => removePlayerFromCampaign()}
+          >
+            <IconX />
+          </IconButton>
+        ) : null}
+        {isDm || isPlayer ? (
+          <Link href={`/app/scenarios/${id}`}>
+            <IconButton
+              className='bg-green-500 hover:bg-green-700'
+              onClick={() => {}}
+            >
+              <IconPlayerPlay />
+            </IconButton>
+          </Link>
+        ) : null}
+        {isInvited ? (
+          <IconButton
+            onClick={onClickConfirmInvite}
+            className='bg-green-500 hover:bg-green-700'
+          >
+            <IconCheck />
+          </IconButton>
+        ) : null}
       </div>
     </div>
   )

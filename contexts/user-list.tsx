@@ -1,8 +1,11 @@
 import { firestoreDb } from '@/utils/firebase'
 import {
+  addDoc,
   collection,
+  doc,
   documentId,
   query,
+  setDoc,
   updateDoc,
   where
 } from 'firebase/firestore'
@@ -28,6 +31,7 @@ type UserListContextProps = {
   allUsers: User[]
   loading: boolean
   updateUser: (user: User) => Promise<boolean>
+  createUser: (user: User) => Promise<boolean>
   currentDm?: User
   currentPlayers?: User[]
 }
@@ -40,20 +44,27 @@ export const UserListContext: React.Context<UserListContextProps> =
   createContext<UserListContextProps>({} as UserListContextProps)
 
 export const UserListContextProvider = ({ children }: UserProviderProps) => {
-  const { userRefs, currentCampaign } = useCampaignList()
+  const { userIds, currentCampaign } = useCampaignList()
   const [value, loading, error] = useCollection(
-    userRefs.length > 0
+    userIds.length > 0
       ? query(
           collection(firestoreDb, 'users'),
-          where(
-            documentId(),
-            'in',
-            userRefs.map(user => user.id)
-          )
+          where(documentId(), 'in', userIds)
         )
       : null,
     { snapshotListenOptions: { includeMetadataChanges: true } }
   )
+
+  const createUser = async (user: User) => {
+    try {
+      await setDoc(doc(firestoreDb, `users/${user.uid}`), user)
+      return true
+    } catch (e) {
+      console.debug(e)
+    } finally {
+      return false
+    }
+  }
 
   const updateUser = async (user: User) => {
     try {
@@ -83,12 +94,12 @@ export const UserListContextProvider = ({ children }: UserProviderProps) => {
     if (loading || !Boolean(allUsers))
       return { dm: undefined, players: undefined }
     return {
-      dm: allUsers.find(user => currentCampaign?.dm.id === user.uid),
+      dm: allUsers.find(user => currentCampaign?.dm === user.uid),
       players: allUsers.filter(user =>
-        currentCampaign?.players?.some(player => player.id === user.uid)
+        currentCampaign?.players?.some(player => player === user.uid)
       )
     }
-  }, [allUsers, currentCampaign?.dm.id, currentCampaign?.players, loading])
+  }, [allUsers, currentCampaign?.dm, currentCampaign?.players, loading])
 
   return (
     <UserListContext.Provider
@@ -96,6 +107,7 @@ export const UserListContextProvider = ({ children }: UserProviderProps) => {
         allUsers,
         loading,
         updateUser,
+        createUser,
         currentDm: dm,
         currentPlayers: players
       }}

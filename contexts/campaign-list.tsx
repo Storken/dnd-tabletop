@@ -6,7 +6,9 @@ import {
   collection,
   deleteDoc,
   doc,
-  updateDoc
+  query,
+  updateDoc,
+  where
 } from 'firebase/firestore'
 import { useParams } from 'next/navigation'
 import {
@@ -22,8 +24,8 @@ import { useCollection } from 'react-firebase-hooks/firestore'
 export type Campaign = {
   id: string
   title: string
-  dm: DocumentReference
-  players: DocumentReference[]
+  dm: string
+  players: string[]
   invited?: string[]
 }
 
@@ -31,12 +33,17 @@ type CampaignListContextProps = {
   currentCampaign?: Campaign
   setCurrentCampaign: (campaign?: Campaign) => void
   allCampaigns: Campaign[]
+  dmCampaigns: Campaign[]
+  playerCampaigns: Campaign[]
+  invitedCampaigns: Campaign[]
   loading: boolean
   createCampaign: () => Promise<boolean>
   removeCampaign: (id: string) => Promise<boolean>
   editCampaign: (campaign: Campaign) => Promise<boolean>
-  userRefs: DocumentReference[]
+  userIds: string[]
 }
+
+export const campaignCollection = collection(firestoreDb, 'campaigns')
 
 type CampaignProviderProps = {
   children: ReactNode
@@ -51,11 +58,31 @@ export const CampaignListContextProvider = ({
   const params = useParams()
   const { user } = useUser()
   const [currentCampaign, setCurrentCampaign] = useState<Campaign>()
-  const [value, loading, error] = useCollection(
-    collection(firestoreDb, 'campaigns'),
+  const [dmCampaignsValues, loading, error] = useCollection(
+    user?.id ? query(campaignCollection, where('dm', '==', user.id)) : null,
     { snapshotListenOptions: { includeMetadataChanges: true } }
   )
-  const [userRefs, setUserRefs] = useState<DocumentReference[]>([])
+  const [playerCampaignsValues, loading2, error2] = useCollection(
+    user?.id
+      ? query(campaignCollection, where('players', 'array-contains', user.id))
+      : null,
+    { snapshotListenOptions: { includeMetadataChanges: true } }
+  )
+  const [invitedCampaignsValues, loading3, error3] = useCollection(
+    user?.id
+      ? query(
+          campaignCollection,
+          where(
+            'invited',
+            'array-contains',
+            user.emailAddresses[0].emailAddress
+          )
+        )
+      : null,
+    { snapshotListenOptions: { includeMetadataChanges: true } }
+  )
+
+  const [userRefs, setUserRefs] = useState<string[]>([])
 
   const createCampaign = async () => {
     try {
@@ -71,12 +98,10 @@ export const CampaignListContextProvider = ({
 
   const editCampaign = async (campaign: Campaign) => {
     try {
-      const docRef = value?.docs.find(doc => doc.id === campaign.id)?.ref
-      if (docRef) {
-        const { id, ...updateData } = campaign
-        await updateDoc(docRef, updateData)
-        return true
-      }
+      const { id, ...updateData } = campaign
+      const docRef = doc(firestoreDb, `campaigns/${id}`)
+      await updateDoc(docRef, updateData)
+      return true
     } catch (e) {
       console.debug(e)
     } finally {
@@ -86,7 +111,7 @@ export const CampaignListContextProvider = ({
 
   const removeCampaign = async (id: string) => {
     try {
-      const docRef = value?.docs.find(doc => doc.id === id)?.ref
+      const docRef = doc(firestoreDb, `campaigns/${id}`)
       if (docRef) {
         await deleteDoc(docRef)
         return true
@@ -98,14 +123,36 @@ export const CampaignListContextProvider = ({
     }
   }
 
-  const allCampaigns = useMemo(() => {
+  const dmCampaigns = useMemo(() => {
     if (loading) return []
-    const campaigns = value?.docs.map(doc => ({
+    return (dmCampaignsValues?.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
-    })) as Campaign[]
+    })) ?? []) as Campaign[]
+  }, [dmCampaignsValues, loading])
 
-    const users: DocumentReference[] = []
+  const playerCampaigns = useMemo(() => {
+    if (loading2) return []
+
+    return (playerCampaignsValues?.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) ?? []) as Campaign[]
+  }, [loading2, playerCampaignsValues])
+
+  const invitedCampaigns = useMemo(() => {
+    if (loading3) return []
+
+    return (invitedCampaignsValues?.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) ?? []) as Campaign[]
+  }, [invitedCampaignsValues, loading3])
+
+  const allCampaigns = useMemo(() => {
+    const campaigns = [...dmCampaigns, ...playerCampaigns, ...invitedCampaigns]
+
+    const users: string[] = []
     campaigns.forEach(({ dm, players }) => {
       users.push(dm, ...(players ?? []))
     })
@@ -113,12 +160,12 @@ export const CampaignListContextProvider = ({
 
     if (campaigns.length > 0) setCurrentCampaign(campaigns[0])
     return campaigns
-  }, [loading, value])
+  }, [dmCampaigns, playerCampaigns, invitedCampaigns])
 
   useEffect(() => {
     const campaign = allCampaigns.find(({ id }) => id === params?.campaign)
     setCurrentCampaign(campaign)
-  }, [allCampaigns, params?.campaign, value])
+  }, [allCampaigns, params?.campaign, dmCampaigns])
 
   return (
     <CampaignListContext.Provider
@@ -126,11 +173,14 @@ export const CampaignListContextProvider = ({
         currentCampaign,
         setCurrentCampaign,
         allCampaigns,
+        dmCampaigns,
+        playerCampaigns,
+        invitedCampaigns,
         loading,
         createCampaign,
         removeCampaign,
         editCampaign,
-        userRefs
+        userIds: userRefs
       }}
     >
       {children}
