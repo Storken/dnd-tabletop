@@ -27,6 +27,16 @@ export type Campaign = {
   dm: string
   players: string[]
   invited?: string[]
+  scenarios?: Scenario[]
+}
+
+export type Scenario = {
+  id: number
+  title?: string
+  bakground?: string
+  grid: 'none' | 'square-0' | 'hexagon-0'
+  xOffset?: number
+  yOffset?: number
 }
 
 type CampaignListContextProps = {

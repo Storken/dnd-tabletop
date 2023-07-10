@@ -8,13 +8,30 @@ import {
   IconX
 } from '@tabler/icons-react'
 import { Campaign } from '@/contexts/campaign-list'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
+import useUserList from '@/contexts/user-list'
 
 const Campaigns = () => {
   const { dmCampaigns, playerCampaigns, invitedCampaigns, createCampaign } =
     useCampaignList()
+
+  const { user } = useUser()
+  const { updateUser, allUsers } = useUserList()
+
+  useEffect(() => {
+    if (user) {
+      const currentUser = allUsers?.find(u => u.uid === user.id)
+      if (currentUser?.displayName !== user.username) {
+        updateUser({
+          uid: user.id,
+          email: user.emailAddresses[0].emailAddress,
+          displayName: user.username ?? ''
+        })
+      }
+    }
+  }, [])
 
   return (
     <>
